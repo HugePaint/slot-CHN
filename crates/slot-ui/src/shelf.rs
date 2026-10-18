@@ -242,17 +242,30 @@ impl Shelf {
     }
 
     fn start_of_letter(&self, from: usize) -> usize {
-        let n = self.carts.len();
         let letter = slot_store::initial(&self.carts[from].stem);
-        let mut at = from;
-        for _ in 0..n {
-            let before = (at as i32 - 1).rem_euclid(n as i32) as usize;
-            if slot_store::initial(&self.carts[before].stem) != letter {
-                break;
+        self.carts
+            .iter()
+            .position(|cart| slot_store::initial(&cart.stem) == letter)
+            .unwrap_or(from)
+    }
+
+    fn next_letter(&self, from: usize, dir: i32) -> Option<char> {
+        let buckets = slot_store::INITIAL_BUCKETS;
+        let here = slot_store::initial(&self.carts[from].stem);
+        let at = buckets.iter().position(|bucket| *bucket == here)? as i32;
+        for distance in 1..buckets.len() {
+            let slot =
+                (at + dir.signum() * distance as i32).rem_euclid(buckets.len() as i32) as usize;
+            let letter = buckets[slot];
+            if self
+                .carts
+                .iter()
+                .any(|cart| slot_store::initial(&cart.stem) == letter)
+            {
+                return Some(letter);
             }
-            at = before;
         }
-        at
+        None
     }
 
     fn jump(&mut self, dir: i32) {
@@ -260,33 +273,26 @@ impl Shelf {
         if n < 2 {
             return;
         }
-        let wrap = |i: i32| i.rem_euclid(n as i32) as usize;
-        let here = slot_store::initial(&self.carts[self.index].stem);
-        if self
-            .carts
-            .iter()
-            .all(|c| slot_store::initial(&c.stem) == here)
-        {
-            return;
-        }
         let target = match dir > 0 {
-            true => {
-                let mut at = self.index;
-                for _ in 0..n {
-                    at = wrap(at as i32 + 1);
-                    if slot_store::initial(&self.carts[at].stem) != here {
-                        break;
-                    }
-                }
-                at
-            }
+            true => self.next_letter(self.index, dir).and_then(|letter| {
+                self.carts
+                    .iter()
+                    .position(|cart| slot_store::initial(&cart.stem) == letter)
+            }),
             false => {
                 let start = self.start_of_letter(self.index);
                 match start == self.index {
-                    true => self.start_of_letter(wrap(start as i32 - 1)),
-                    false => start,
+                    true => self.next_letter(self.index, dir).and_then(|letter| {
+                        self.carts
+                            .iter()
+                            .position(|cart| slot_store::initial(&cart.stem) == letter)
+                    }),
+                    false => Some(start),
                 }
             }
+        };
+        let Some(target) = target else {
+            return;
         };
         let ahead = (target as i32 - self.index as i32).rem_euclid(n as i32);
         let delta = match dir > 0 {

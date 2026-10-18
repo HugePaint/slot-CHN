@@ -2216,6 +2216,17 @@ fn a_letter_jump_shows_the_letter_in_the_slot_and_fades_like_the_shelf_name() {
 }
 
 #[test]
+fn a_jump_to_a_hanzi_title_shows_its_pinyin_initial() {
+    let mut a = app_with_carts(&["Alpha", "宝可梦"]);
+
+    a.apply(Action::GbaDown(Btn::Down));
+    a.apply(Action::GbaUp(Btn::Down));
+
+    assert_eq!(a.selected_stem(), Some("宝可梦"));
+    assert_eq!(a.slot_text().as_deref(), Some("B"));
+}
+
+#[test]
 fn the_shader_shortcut_steps_the_seated_carts_shader_both_ways_and_names_it() {
     let d = common::tmp_root_with_carts(&["Emerald", "Fusion"]);
     let (mut s, _motor) = common::session_with_platform(d.path());

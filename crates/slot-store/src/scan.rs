@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::fmt;
 use std::path::{Path, PathBuf};
 
+use pinyin::ToPinyin;
+
 use crate::gba::header_title_code;
 use crate::platform::Platform;
 
@@ -125,30 +127,80 @@ fn is_file(entry: &std::fs::DirEntry) -> bool {
 }
 
 pub fn sort_key(stem: &str) -> (u8, String) {
-    (group_of(stem), stem.to_uppercase())
+    (bucket_of(stem), stem.to_uppercase())
 }
 
-fn group_of(stem: &str) -> u8 {
-    match stem.chars().find(|c| !c.is_whitespace()) {
-        Some(c) if c.is_ascii_digit() => 0,
-        Some(c) if c.is_alphabetic() => 1,
-        _ => 2,
-    }
+pub const INITIAL_BUCKETS: [char; 27] = [
+    '#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+];
+
+fn bucket_of(stem: &str) -> u8 {
+    INITIAL_BUCKETS
+        .iter()
+        .position(|bucket| *bucket == initial(stem))
+        .unwrap_or(0) as u8
 }
 
 pub fn initial(stem: &str) -> char {
-    match group_of(stem) {
-        1 => stem
-            .chars()
-            .find(|c| !c.is_whitespace())
-            .and_then(|c| c.to_uppercase().next())
-            .unwrap_or('#'),
-        _ => '#',
+    let Some(first) = stem.chars().find(|c| !c.is_whitespace()) else {
+        return '#';
+    };
+    if first.is_ascii_alphabetic() {
+        return first.to_ascii_uppercase();
     }
+    first
+        .to_pinyin()
+        .and_then(|pinyin| pinyin.plain().chars().next())
+        .filter(char::is_ascii_alphabetic)
+        .map(|letter| letter.to_ascii_uppercase())
+        .unwrap_or('#')
 }
 
 pub fn is_hidden(p: &Path) -> bool {
     p.file_name()
         .and_then(|n| n.to_str())
         .is_some_and(|n| n.starts_with('.'))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{initial, sort_key, INITIAL_BUCKETS};
+
+    #[test]
+    fn hanzi_are_filed_by_their_pinyin_initial() {
+        assert_eq!(initial("宝可梦"), 'B');
+        assert_eq!(initial("恶魔城"), 'E');
+        assert_eq!(initial("洛克人"), 'L');
+    }
+
+    #[test]
+    fn digits_and_marks_use_the_catch_all_bucket() {
+        assert_eq!(initial("1080 Snowboarding"), '#');
+        assert_eq!(initial("[BIOS] Test"), '#');
+        assert_eq!(initial("ポケットモンスター"), '#');
+        assert!(!INITIAL_BUCKETS.iter().any(char::is_ascii_digit));
+    }
+
+    #[test]
+    fn pinyin_buckets_are_the_primary_sort_order() {
+        let mut names = [
+            "洛克人",
+            "宝可梦",
+            "Advance Wars",
+            "恶魔城",
+            "1080 Snowboarding",
+        ];
+        names.sort_by_key(|name| sort_key(name));
+        assert_eq!(
+            names,
+            [
+                "1080 Snowboarding",
+                "Advance Wars",
+                "宝可梦",
+                "恶魔城",
+                "洛克人"
+            ]
+        );
+    }
 }
