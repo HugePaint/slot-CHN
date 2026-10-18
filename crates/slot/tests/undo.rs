@@ -105,9 +105,9 @@ fn the_label_names_what_will_be_undone() {
     let d = tmp_root_with_carts(&["Emerald"]);
     let mut a = app_playing_in(d.path(), "Emerald");
     a.apply_at(Action::SaveState, 1_000);
-    assert_eq!(a.undo_label(), Some("undo save"));
+    assert_eq!(a.undo_label(), Some(slot_ui::lang::UNDO_SAVE));
     a.apply_at(Action::LoadState, 2_000);
-    assert_eq!(a.undo_label(), Some("undo load"));
+    assert_eq!(a.undo_label(), Some(slot_ui::lang::UNDO_LOAD));
 }
 
 #[test]

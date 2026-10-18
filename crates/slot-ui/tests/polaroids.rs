@@ -3,8 +3,19 @@ use std::path::Path;
 use slot_power::{Battery, Charge};
 use slot_store::StateEntry;
 use slot_ui::{
-    photo_face, Draw, PhotoFace, Polaroids, Printed, TexId, OUT_W, PHOTO_H, PHOTO_W, PLATE_H,
+    lang, photo_face, Draw, PhotoFace, Polaroids, Printed, TexId, OUT_W, PHOTO_H, PHOTO_W, PLATE_H,
 };
+
+fn relative(value: i64, unit: &str) -> String {
+    #[cfg(not(feature = "lang-zh-cn"))]
+    {
+        format!("{value} {unit}")
+    }
+    #[cfg(feature = "lang-zh-cn")]
+    {
+        format!("{value}{unit}")
+    }
+}
 
 fn entry(dir: &Path, stamp: &str) -> StateEntry {
     StateEntry {
@@ -40,15 +51,15 @@ fn relative_time_reads_off_the_stamp() {
     let now = "2026-08-09_14-36-05";
     assert_eq!(
         Polaroids::relative_time("2026-08-09_14-32-05", now),
-        "4 min ago"
+        relative(4, lang::MIN_AGO)
     );
     assert_eq!(
         Polaroids::relative_time("2026-08-09_13-36-05", now),
-        "1 hr ago"
+        relative(1, lang::HR_AGO)
     );
     assert_eq!(
         Polaroids::relative_time("2026-08-09_11-36-05", now),
-        "3 hr ago"
+        relative(3, lang::HR_AGO)
     );
 }
 
@@ -56,7 +67,7 @@ fn relative_time_reads_off_the_stamp() {
 fn an_hour_before_midnight_is_not_yesterday() {
     assert_eq!(
         Polaroids::relative_time("2026-08-08_23-30-00", "2026-08-09_01-00-00"),
-        "1 hr ago"
+        relative(1, lang::HR_AGO)
     );
 }
 
@@ -64,7 +75,7 @@ fn an_hour_before_midnight_is_not_yesterday() {
 fn a_stamp_ahead_of_the_clock_does_not_read_as_a_lifetime_ago() {
     assert_eq!(
         Polaroids::relative_time("2026-08-09_15-00-00", "2026-08-09_14-36-05"),
-        "just now"
+        lang::JUST_NOW
     );
 }
 

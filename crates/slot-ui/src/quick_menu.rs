@@ -1,5 +1,6 @@
 use crate::bitmaps::{button_legend, ButtonLegend};
 use crate::draw::{Canvas, Draw, TexId, OUT_H, OUT_W};
+use crate::lang;
 use crate::plate::{
     blit, centred_hints, word_face, word_ink, UndoFace, CAP_GAP, HINT_EDGE, HINT_H, LEGEND_GAP,
 };
@@ -395,40 +396,37 @@ impl QuickRow {
 
     pub fn label(self) -> &'static str {
         match self {
-            QuickRow::FastForward => "Fast Forward",
-            QuickRow::FastForwardSound => "Fast Forward Sound",
-            QuickRow::Screen => "Screen",
-            QuickRow::Rumble => "Rumble",
-            QuickRow::LeftStick => "Left Stick as D-Pad",
-            QuickRow::DateTime => "Date & Time",
-            QuickRow::About => "About",
-            QuickRow::GbaShader => "Shader",
-            QuickRow::GbShader => "Shader",
-            QuickRow::GbcShader => "Shader",
-            QuickRow::GbaColourCorrection => "Color Correction",
-            QuickRow::GbColourCorrection => "Color Correction",
-            QuickRow::GbcColourCorrection => "Color Correction",
-            QuickRow::Game => "Gameplay",
-            QuickRow::EjectSave => "Auto Save on Eject",
-            QuickRow::Turbo => "Turbo Buttons",
-            QuickRow::Rewind => "Rewind",
-            QuickRow::GbPalettes => "Palettes",
-            QuickRow::Theme => "Theme",
-            QuickRow::Wallpaper => "Wallpaper",
-            QuickRow::Recents => "Recents",
-            QuickRow::ShowTitles => "Game Titles",
-            QuickRow::WallpaperTint => "Wallpaper Tint",
-            QuickRow::Resume => "Resume",
-            QuickRow::States => "States",
-            QuickRow::Settings => "Settings",
-            QuickRow::ExitGame => "Exit Game",
-            QuickRow::General => "General",
-            QuickRow::LidOff => "Lid Power Off",
-            QuickRow::Controls => "Controls",
-            QuickRow::ControlsShelf => "Shelf",
-            QuickRow::ControlsInGame => "In-Game",
-            QuickRow::PlayControls => "Controls",
-            QuickRow::Shortcuts => "Shortcuts",
+            QuickRow::FastForward => lang::FAST_FORWARD,
+            QuickRow::FastForwardSound => lang::FAST_FORWARD_SOUND,
+            QuickRow::Screen => lang::SCREEN,
+            QuickRow::Rumble => lang::RUMBLE,
+            QuickRow::LeftStick => lang::LEFT_STICK,
+            QuickRow::DateTime => lang::DATE_TIME,
+            QuickRow::About => lang::ABOUT,
+            QuickRow::GbaShader | QuickRow::GbShader | QuickRow::GbcShader => lang::SHADER,
+            QuickRow::GbaColourCorrection
+            | QuickRow::GbColourCorrection
+            | QuickRow::GbcColourCorrection => lang::COLOR_CORRECTION,
+            QuickRow::Game => lang::GAMEPLAY,
+            QuickRow::EjectSave => lang::EJECT_SAVE,
+            QuickRow::Turbo => lang::TURBO,
+            QuickRow::Rewind => lang::REWIND,
+            QuickRow::GbPalettes => lang::PALETTES,
+            QuickRow::Theme => lang::THEME,
+            QuickRow::Wallpaper => lang::WALLPAPER,
+            QuickRow::Recents => lang::RECENTS,
+            QuickRow::ShowTitles => lang::GAME_TITLES,
+            QuickRow::WallpaperTint => lang::WALLPAPER_TINT,
+            QuickRow::Resume => lang::RESUME,
+            QuickRow::States => lang::STATES,
+            QuickRow::Settings => lang::SETTINGS,
+            QuickRow::ExitGame => lang::EXIT_GAME,
+            QuickRow::General => lang::GENERAL,
+            QuickRow::LidOff => lang::LID_POWER_OFF,
+            QuickRow::Controls | QuickRow::PlayControls => lang::CONTROLS,
+            QuickRow::ControlsShelf => lang::SHELF,
+            QuickRow::ControlsInGame => lang::IN_GAME,
+            QuickRow::Shortcuts => lang::SHORTCUTS,
             QuickRow::GameUp
             | QuickRow::GameDown
             | QuickRow::GameLeft
@@ -438,7 +436,7 @@ impl QuickRow {
             | QuickRow::GameSelect
             | QuickRow::GameStart
             | QuickRow::GameL
-            | QuickRow::GameR => self.game_button().map_or("", GameButton::label),
+            | QuickRow::GameR => self.game_button().map_or("", lang::game_button),
             QuickRow::ScSave
             | QuickRow::ScLoad
             | QuickRow::ScBrightUp
@@ -451,22 +449,21 @@ impl QuickRow {
             | QuickRow::ScShaderNext
             | QuickRow::ScShaderBack
             | QuickRow::ScFastForward
-            | QuickRow::ScRewind => self.shortcut().map_or("", Shortcut::label),
+            | QuickRow::ScRewind => self.shortcut().map_or("", lang::shortcut),
             QuickRow::ShelfPrev | QuickRow::ShelfNext | QuickRow::ShelfFavorite => {
-                self.carousel_action().map_or("", CarouselAction::label)
+                self.carousel_action().map_or("", lang::carousel)
             }
-            QuickRow::PlayScreen => "Screen",
-            QuickRow::PlayGameplay => "Gameplay",
-            QuickRow::Shader => "Shader",
-            QuickRow::ColourCorrection => "Color Correction",
-            QuickRow::Palette => "Palette",
+            QuickRow::PlayScreen => lang::SCREEN,
+            QuickRow::PlayGameplay => lang::GAMEPLAY,
+            QuickRow::Shader => lang::SHADER,
+            QuickRow::ColourCorrection => lang::COLOR_CORRECTION,
+            QuickRow::Palette => lang::PALETTE,
             QuickRow::ScreenGba => "Game Boy Advance",
             QuickRow::ScreenGbc => "Game Boy Color",
             QuickRow::ScreenGb => "Game Boy",
-            QuickRow::GbBezel => "Bezel",
-            QuickRow::GbcBezel => "Bezel",
-            QuickRow::GbaBezel => "Bezel",
-            QuickRow::Bezel => "Bezel",
+            QuickRow::GbBezel | QuickRow::GbcBezel | QuickRow::GbaBezel | QuickRow::Bezel => {
+                lang::BEZEL
+            }
         }
     }
 
@@ -629,25 +626,25 @@ impl QuickValue {
             QuickValue::Speed3 => "3×",
             QuickValue::Speed4 => "4×",
             QuickValue::Speed6 => "6×",
-            QuickValue::On => "On",
-            QuickValue::Off => "Off",
+            QuickValue::On => lang::ON,
+            QuickValue::Off => lang::OFF,
             QuickValue::Lcd3x => "LCD3x",
-            QuickValue::Grid => "Grid",
-            QuickValue::Dot => "Dot",
+            QuickValue::Grid => lang::GRID,
+            QuickValue::Dot => lang::DOT,
             QuickValue::Simpletex => "Simpletex",
-            QuickValue::Dark => "Dark",
-            QuickValue::Light => "Light",
-            QuickValue::Show => "Show",
-            QuickValue::Hide => "Hide",
+            QuickValue::Dark => lang::DARK,
+            QuickValue::Light => lang::LIGHT,
+            QuickValue::Show => lang::SHOW,
+            QuickValue::Hide => lang::HIDE,
             QuickValue::Low => "25%",
             QuickValue::Medium => "45%",
             QuickValue::High => "65%",
-            QuickValue::Min1 => "1 min",
-            QuickValue::Min3 => "3 min",
-            QuickValue::Min5 => "5 min",
-            QuickValue::Min10 => "10 min",
-            QuickValue::Min15 => "15 min",
-            QuickValue::Min30 => "30 min",
+            QuickValue::Min1 => lang::MIN_1,
+            QuickValue::Min3 => lang::MIN_3,
+            QuickValue::Min5 => lang::MIN_5,
+            QuickValue::Min10 => lang::MIN_10,
+            QuickValue::Min15 => lang::MIN_15,
+            QuickValue::Min30 => lang::MIN_30,
         }
     }
 
@@ -804,19 +801,19 @@ pub fn quick_caret_face(right: bool) -> UndoFace {
 pub fn quick_legend_faces(ink: [u8; 3]) -> [UndoFace; 8] {
     let hint = Some(ink);
     [
-        with_hint(button_face(ButtonLegend::B), "Back", hint, true),
+        with_hint(button_face(ButtonLegend::B), lang::BACK, hint, true),
         with_hint(
             button_pair(ButtonLegend::Left, ButtonLegend::Right),
-            "Change",
+            lang::CHANGE,
             hint,
             false,
         ),
-        with_hint(button_face(ButtonLegend::A), "Open", hint, false),
-        with_hint(button_face(ButtonLegend::B), "Resume", hint, true),
-        with_hint(button_face(ButtonLegend::X), "Restart", hint, false),
-        with_hint(button_face(ButtonLegend::A), "Set", hint, false),
-        with_hint(button_face(ButtonLegend::X), "Clear", hint, false),
-        with_hint(button_face(ButtonLegend::Y), "Reset All", hint, true),
+        with_hint(button_face(ButtonLegend::A), lang::OPEN, hint, false),
+        with_hint(button_face(ButtonLegend::B), lang::RESUME, hint, true),
+        with_hint(button_face(ButtonLegend::X), lang::RESTART, hint, false),
+        with_hint(button_face(ButtonLegend::A), lang::SET, hint, false),
+        with_hint(button_face(ButtonLegend::X), lang::CLEAR, hint, false),
+        with_hint(button_face(ButtonLegend::Y), lang::RESET_ALL, hint, true),
     ]
 }
 
@@ -861,14 +858,14 @@ pub fn quick_description_face(lines: &[&str]) -> UndoFace {
 /// Cancel, Swap, Choose. Swap keeps the button before the word, the way the old arrows did.
 pub fn core_button_legends() -> Vec<UndoFace> {
     vec![
-        with_hint(button_face(ButtonLegend::B), "Cancel", None, true),
+        with_hint(button_face(ButtonLegend::B), lang::CANCEL, None, true),
         with_hint(
             button_pair(ButtonLegend::Left, ButtonLegend::Right),
-            "Swap",
+            lang::SWAP,
             None,
             true,
         ),
-        with_hint(button_face(ButtonLegend::A), "Choose", None, false),
+        with_hint(button_face(ButtonLegend::A), lang::CHOOSE, None, false),
     ]
 }
 
@@ -876,23 +873,23 @@ pub fn core_button_legends() -> Vec<UndoFace> {
 pub fn link_button_legends(ink: [u8; 3]) -> Vec<UndoFace> {
     let hint = Some(ink);
     vec![
-        with_hint(button_face(ButtonLegend::B), "Cancel", hint, true),
-        with_hint(button_face(ButtonLegend::Select), "Mode", hint, true),
+        with_hint(button_face(ButtonLegend::B), lang::CANCEL, hint, true),
+        with_hint(button_face(ButtonLegend::Select), lang::MODE, hint, true),
         with_hint(
             button_pair(ButtonLegend::Left, ButtonLegend::Right),
-            "Swap",
+            lang::SWAP,
             hint,
             false,
         ),
-        with_hint(button_face(ButtonLegend::A), "Link", hint, false),
-        with_hint(button_face(ButtonLegend::A), "OK", hint, false),
-        with_hint(button_face(ButtonLegend::B), "Back", hint, true),
-        with_hint(button_face(ButtonLegend::A), "End Link", hint, false),
+        with_hint(button_face(ButtonLegend::A), lang::LINK, hint, false),
+        with_hint(button_face(ButtonLegend::A), lang::OK, hint, false),
+        with_hint(button_face(ButtonLegend::B), lang::BACK, hint, true),
+        with_hint(button_face(ButtonLegend::A), lang::END_LINK, hint, false),
     ]
 }
 
 pub fn repair_legends(ink: [u8; 3]) -> [UndoFace; 2] {
-    prompt_legends(ink, "Not now", "Repair")
+    prompt_legends(ink, lang::NOT_NOW, lang::REPAIR)
 }
 
 pub fn prompt_legends(ink: [u8; 3], no: &str, yes: &str) -> [UndoFace; 2] {

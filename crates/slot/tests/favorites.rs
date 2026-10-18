@@ -80,7 +80,7 @@ fn y_on_the_shelf_stars_the_cart_and_saves_it_without_a_banner() {
 fn the_favorites_shelf_only_shows_once_something_is_starred() {
     let d = card();
     let mut a = boot_with(d.path(), SlotState::default());
-    assert!(!names(&mut a).contains(&"Favorites"));
+    assert!(!names(&mut a).contains(&slot_ui::lang::FAVORITES));
     go_to(&mut a, "Game Boy");
     press(&mut a, Btn::Y);
     go_to(&mut a, "Favorites");
@@ -131,7 +131,7 @@ fn unstarring_on_the_favorites_shelf_takes_the_cart_off_it() {
     assert_eq!(a.selected_stem(), Some("Emerald"));
     press(&mut a, Btn::Y);
     assert_eq!(a.toast(), None);
-    assert_eq!(a.shelf_platform_name(), Some("Favorites"));
+    assert_eq!(a.shelf_platform_name(), Some(slot_ui::lang::FAVORITES));
     assert_eq!(a.selected_stem(), Some("Tetris"));
     assert_eq!(
         read_slot_state(d.path()).favorites,
@@ -151,9 +151,9 @@ fn unstarring_the_last_favorite_leaves_the_empty_shelf() {
     );
     go_to(&mut a, "Favorites");
     press(&mut a, Btn::Y);
-    assert_ne!(a.shelf_platform_name(), Some("Favorites"));
+    assert_ne!(a.shelf_platform_name(), Some(slot_ui::lang::FAVORITES));
     assert!(read_slot_state(d.path()).favorites.is_empty());
-    assert!(!names(&mut a).contains(&"Favorites"));
+    assert!(!names(&mut a).contains(&slot_ui::lang::FAVORITES));
 }
 
 #[test]

@@ -1,25 +1,25 @@
 use slot_store::GbPalette;
 use slot_ui::{
-    toast_face, toast_rect, Canvas, Draw, Hud, HudKind, TexId, Toast, ALARM_BAND_H, OUT_H, OUT_W,
-    PLATE_H,
+    lang, toast_face, toast_rect, Canvas, Draw, Hud, HudKind, TexId, Toast, ALARM_BAND_H, OUT_H,
+    OUT_W, PLATE_H,
 };
 
 #[test]
 fn saving_and_loading_say_which_one_happened() {
-    assert_eq!(Toast::StateSaved.text(), "State Saved");
-    assert_eq!(Toast::StateLoaded.text(), "State Loaded");
+    assert_eq!(Toast::StateSaved.text(), lang::TOAST_STATE_SAVED);
+    assert_eq!(Toast::StateLoaded.text(), lang::TOAST_STATE_LOADED);
 }
 
 #[test]
 fn the_link_shortcut_on_the_wrong_core_says_to_switch() {
-    assert_eq!(Toast::NeedsGpsp.text(), "Please switch to gpSP");
+    assert_eq!(Toast::NeedsGpsp.text(), lang::TOAST_NEEDS_GPSP);
     let f = toast_face(Toast::NeedsGpsp);
     assert!(f.rgba.chunks(4).any(|p| p[3] > 0), "the banner is blank");
 }
 
 #[test]
 fn a_cart_gpsp_cannot_link_says_there_is_no_link() {
-    assert_eq!(Toast::NoLink.text(), "No link support");
+    assert_eq!(Toast::NoLink.text(), lang::TOAST_NO_LINK);
     let f = toast_face(Toast::NoLink);
     assert!(f.rgba.chunks(4).any(|p| p[3] > 0), "the banner is blank");
 }
@@ -267,11 +267,8 @@ fn the_card_alarm_is_drawn_over_the_volume_bar() {
 
 #[test]
 fn the_card_alarm_says_what_failed_and_what_it_costs() {
-    assert_eq!(Toast::CardUnwritable.text(), "Can't write to SD card");
-    assert_eq!(
-        Toast::CardUnwritable.detail(),
-        Some("Progress is not being saved")
-    );
+    assert_eq!(Toast::CardUnwritable.text(), lang::TOAST_CARD_UNWRITABLE);
+    assert_eq!(Toast::CardUnwritable.detail(), Some(lang::DETAIL_NOT_SAVED));
     assert_eq!(Toast::StateSaved.detail(), None);
 }
 
@@ -291,10 +288,7 @@ fn the_card_alarm_inks_both_of_its_lines() {
 fn a_card_that_can_be_repaired_says_how() {
     assert!(Toast::CardRepair.alarm());
     assert_eq!(Toast::CardRepair.text(), Toast::CardUnwritable.text());
-    assert_eq!(
-        Toast::CardRepair.detail(),
-        Some("Press SELECT + START to repair")
-    );
+    assert_eq!(Toast::CardRepair.detail(), Some(lang::DETAIL_REPAIR));
     assert!(!Toast::CardRepaired.alarm());
     assert!(!Toast::CardRepairFailed.alarm());
 }
@@ -320,25 +314,32 @@ fn the_alarm_band_carries_the_banner_it_was_given() {
 
 #[test]
 fn the_repair_prompt_line_keeps_every_word() {
-    let f = slot_ui::menu_detail_face("slot restarts when it is done.");
+    let f = slot_ui::menu_detail_face(lang::REPAIR_RESTARTS);
     let inked: Vec<bool> = (0..f.w as usize)
         .map(|x| (0..f.h as usize).any(|y| f.rgba[(y * f.w as usize + x) * 4 + 3] > 0))
         .collect();
     let first = inked.iter().position(|i| *i).expect("blank line");
     let last = inked.iter().rposition(|i| *i).unwrap();
-    let mut gaps = 0;
-    let mut run = 0;
-    for i in &inked[first..=last] {
-        if *i {
-            if run >= 7 {
-                gaps += 1;
+    #[cfg(not(feature = "lang-zh-cn"))]
+    {
+        let mut gaps = 0;
+        let mut run = 0;
+        for i in &inked[first..=last] {
+            if *i {
+                if run >= 7 {
+                    gaps += 1;
+                }
+                run = 0;
+            } else {
+                run += 1;
             }
-            run = 0;
-        } else {
-            run += 1;
         }
+        assert_eq!(gaps + 1, 6, "the line kept {} of its 6 words", gaps + 1);
     }
-    assert_eq!(gaps + 1, 6, "the line kept {} of its 6 words", gaps + 1);
+    #[cfg(feature = "lang-zh-cn")]
+    {
+        assert!(last > first, "the Chinese repair line is blank");
+    }
 }
 
 #[test]

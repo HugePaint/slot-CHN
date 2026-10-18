@@ -57,6 +57,22 @@ please [open an issue on GitHub](https://github.com/BrandonKowalski/slot/issues)
 
 ---
 
+# Simplified Chinese builds
+
+Device builds made with `task build:device` use the Simplified Chinese interface. For a Chinese
+host build, run `cargo run --release -p slot --features lang-zh-cn`.
+
+The card ships with **Plix Bold** (普力士) by 虎卅泓
+([cathree3/Plix](https://github.com/cathree3/Plix)), based on IBM Plex Sans and licensed under the
+SIL Open Font License. `System/fonts/Plix-Bold.otf` and its licence text are both included in the
+device bundle. The binary also embeds a small Plix subset so the Chinese interface remains readable
+when the card font is missing.
+
+Custom TTF, OTF, and TTC files are supported in `System/fonts/`; the first font in filename order is
+used. `System/font.ttf` remains supported as a single-file alternative.
+
+---
+
 # AI Disclosure
 
 The Rust frontend, and the SVGs on [slot-cfw.fyi](https://slot-cfw.fyi), were put together by Claude.

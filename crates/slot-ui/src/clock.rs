@@ -3,6 +3,7 @@ use slot_store::{
     civil_from_days, days_from_civil, days_in_month, parse_stamp, UTC_OFFSET_MAX, UTC_OFFSET_MIN,
 };
 
+use crate::lang;
 use crate::plate::{blit, centred_hints, hint_width, UndoFace, HINT_H, LEGEND_GAP};
 use crate::text;
 
@@ -27,7 +28,6 @@ const CARET_GAP: f32 = 6.0;
 const HINT_DROP: f32 = 48.0;
 
 const SET_CLOCK_KEY: &str = "A";
-const SET_CLOCK_LABEL: &str = "set the clock";
 
 pub fn clock_label(stamp: &str) -> String {
     parse_stamp(stamp).map(hhmm).unwrap_or_default()
@@ -38,17 +38,25 @@ pub fn hhmm(secs: i64) -> String {
     format!("{:02}:{:02}", rem / 3600, rem / 60 % 60)
 }
 
+#[cfg(not(feature = "lang-zh-cn"))]
 const MONTHS: [&str; 12] = [
     "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
 ];
 
 pub fn date_time_text(secs: i64) -> String {
     let (_, month, day) = civil_from_days(secs.div_euclid(DAY));
-    let name = MONTHS
-        .get((month - 1) as usize)
-        .copied()
-        .unwrap_or_default();
-    format!("{name} {day} {}", hhmm(secs))
+    #[cfg(feature = "lang-zh-cn")]
+    {
+        format!("{month}月{day}日 {}", hhmm(secs))
+    }
+    #[cfg(not(feature = "lang-zh-cn"))]
+    {
+        let name = MONTHS
+            .get((month - 1) as usize)
+            .copied()
+            .unwrap_or_default();
+        format!("{name} {day} {}", hhmm(secs))
+    }
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
@@ -272,7 +280,7 @@ impl ClockPicker {
             ],
         });
         let hint_y = y + PICKER_H as f32 + HINT_DROP;
-        let hw = hint_width(SET_CLOCK_KEY, SET_CLOCK_LABEL);
+        let hw = hint_width(SET_CLOCK_KEY, lang::SET_CLOCK);
         let (Some(back), Some(tex)) = (back, hint) else {
             if let Some(tex) = hint {
                 out.push(Draw::Tex {
@@ -300,7 +308,7 @@ impl ClockPicker {
 }
 
 pub fn set_clock_hint_face() -> UndoFace {
-    crate::plate::hint_face(SET_CLOCK_KEY, SET_CLOCK_LABEL)
+    crate::plate::hint_face(SET_CLOCK_KEY, lang::SET_CLOCK)
 }
 
 fn picker_w() -> u32 {

@@ -1,7 +1,7 @@
 use slot_store::{parse_stamp, FF_SPEEDS};
 use slot_ui::{
-    date_time_text, quick_caret_face, quick_label_face, quick_value_face, ClockPicker, QuickRow,
-    QuickValue, UndoFace, MENU_PAD,
+    date_time_text, lang, quick_caret_face, quick_label_face, quick_value_face, ClockPicker,
+    QuickRow, QuickValue, UndoFace, MENU_PAD,
 };
 
 fn inked(f: &UndoFace, x: u32, y: u32) -> bool {
@@ -79,27 +79,33 @@ fn the_fast_forward_row_offers_the_four_ceilings_the_card_can_hold() {
 fn the_rows_run_in_the_order_the_user_chose() {
     assert_eq!(
         QuickRow::MAIN.map(QuickRow::label),
-        ["General", "Screen", "Gameplay", "Controls", "About"]
+        [
+            lang::GENERAL,
+            lang::SCREEN,
+            lang::GAMEPLAY,
+            lang::CONTROLS,
+            lang::ABOUT
+        ]
     );
     assert_eq!(
         QuickRow::GENERAL.map(QuickRow::label),
         [
-            "Theme",
-            "Wallpaper",
-            "Wallpaper Tint",
-            "Recents",
-            "Game Titles",
-            "Lid Power Off",
-            "Date & Time"
+            lang::THEME,
+            lang::WALLPAPER,
+            lang::WALLPAPER_TINT,
+            lang::RECENTS,
+            lang::GAME_TITLES,
+            lang::LID_POWER_OFF,
+            lang::DATE_TIME
         ]
     );
     assert_eq!(
         QuickRow::CONTROL_PAGES.map(QuickRow::label),
-        ["Shelf", "Shortcuts", "In-Game"]
+        [lang::SHELF, lang::SHORTCUTS, lang::IN_GAME]
     );
     assert_eq!(
         QuickRow::SHELF_KEYS.map(QuickRow::label),
-        ["Previous Shelf", "Next Shelf", "Favorite"]
+        slot_store::CarouselAction::ALL.map(lang::carousel)
     );
     assert_eq!(
         QuickRow::SCREEN.map(QuickRow::label),
@@ -107,26 +113,31 @@ fn the_rows_run_in_the_order_the_user_chose() {
     );
     assert_eq!(
         QuickRow::SCREEN_GBA.map(QuickRow::label),
-        ["Shader", "Color Correction", "Bezel"]
+        [lang::SHADER, lang::COLOR_CORRECTION, lang::BEZEL]
     );
     assert_eq!(
         QuickRow::SCREEN_GBC.map(QuickRow::label),
-        ["Shader", "Color Correction", "Bezel"]
+        [lang::SHADER, lang::COLOR_CORRECTION, lang::BEZEL]
     );
     assert_eq!(
         QuickRow::SCREEN_GB.map(QuickRow::label),
-        ["Shader", "Color Correction", "Palettes", "Bezel"]
+        [
+            lang::SHADER,
+            lang::COLOR_CORRECTION,
+            lang::PALETTES,
+            lang::BEZEL
+        ]
     );
     assert_eq!(
         QuickRow::GAME.map(QuickRow::label),
         [
-            "Fast Forward",
-            "Fast Forward Sound",
-            "Rewind",
-            "Turbo Buttons",
-            "Rumble",
-            "Left Stick as D-Pad",
-            "Auto Save on Eject"
+            lang::FAST_FORWARD,
+            lang::FAST_FORWARD_SOUND,
+            lang::REWIND,
+            lang::TURBO,
+            lang::RUMBLE,
+            lang::LEFT_STICK,
+            lang::EJECT_SAVE
         ]
     );
     let opens: Vec<QuickRow> = QuickRow::ALL.into_iter().filter(|r| r.opens()).collect();
@@ -197,25 +208,25 @@ fn the_values_read_as_the_menu_prints_them() {
             "3×",
             "4×",
             "6×",
-            "On",
-            "Off",
+            lang::ON,
+            lang::OFF,
             "LCD3x",
-            "Grid",
-            "Dot",
+            lang::GRID,
+            lang::DOT,
             "Simpletex",
-            "Dark",
-            "Light",
-            "Show",
-            "Hide",
+            lang::DARK,
+            lang::LIGHT,
+            lang::SHOW,
+            lang::HIDE,
             "25%",
             "45%",
             "65%",
-            "1 min",
-            "3 min",
-            "5 min",
-            "10 min",
-            "15 min",
-            "30 min",
+            lang::MIN_1,
+            lang::MIN_3,
+            lang::MIN_5,
+            lang::MIN_10,
+            lang::MIN_15,
+            lang::MIN_30,
         ]
     );
     assert_eq!(QuickValue::flag(true), QuickValue::On);
@@ -225,8 +236,16 @@ fn the_values_read_as_the_menu_prints_them() {
 #[test]
 fn the_date_and_time_read_as_a_month_a_day_and_the_carousels_24_hour_clock() {
     let at = |stamp: &str| date_time_text(parse_stamp(stamp).expect("a stamp"));
-    assert_eq!(at("2026-09-15_16-35-00"), "SEP 15 16:35");
-    assert_eq!(at("2027-01-05_04-07-59"), "JAN 5 04:07");
+    #[cfg(not(feature = "lang-zh-cn"))]
+    {
+        assert_eq!(at("2026-09-15_16-35-00"), "SEP 15 16:35");
+        assert_eq!(at("2027-01-05_04-07-59"), "JAN 5 04:07");
+    }
+    #[cfg(feature = "lang-zh-cn")]
+    {
+        assert_eq!(at("2026-09-15_16-35-00"), "9月15日 16:35");
+        assert_eq!(at("2027-01-05_04-07-59"), "1月5日 04:07");
+    }
 }
 
 #[test]
@@ -320,14 +339,11 @@ fn the_in_game_pages_hold_their_rows_in_order() {
     );
     assert_eq!(
         QuickRow::SETTINGS.map(QuickRow::label),
-        ["Screen", "Gameplay", "Controls"]
+        [lang::SCREEN, lang::GAMEPLAY, lang::CONTROLS]
     );
     assert_eq!(
         QuickRow::CONTROLS.map(QuickRow::label),
-        [
-            "Up", "Down", "Left", "Right", "A Button", "B Button", "Select", "Start", "L Button",
-            "R Button"
-        ]
+        slot_store::GameButton::ALL.map(lang::game_button)
     );
     assert_eq!(
         QuickRow::PLAY_SCREEN,
@@ -366,15 +382,15 @@ fn in_game_pages_climb_back_through_settings() {
 #[test]
 fn in_game_rows_read_as_the_menu_shows_them() {
     let labels = [
-        (QuickRow::Resume, "Resume"),
-        (QuickRow::States, "States"),
-        (QuickRow::Settings, "Settings"),
-        (QuickRow::ExitGame, "Exit Game"),
-        (QuickRow::PlayScreen, "Screen"),
-        (QuickRow::PlayGameplay, "Gameplay"),
-        (QuickRow::Shader, "Shader"),
-        (QuickRow::ColourCorrection, "Color Correction"),
-        (QuickRow::Palette, "Palette"),
+        (QuickRow::Resume, lang::RESUME),
+        (QuickRow::States, lang::STATES),
+        (QuickRow::Settings, lang::SETTINGS),
+        (QuickRow::ExitGame, lang::EXIT_GAME),
+        (QuickRow::PlayScreen, lang::SCREEN),
+        (QuickRow::PlayGameplay, lang::GAMEPLAY),
+        (QuickRow::Shader, lang::SHADER),
+        (QuickRow::ColourCorrection, lang::COLOR_CORRECTION),
+        (QuickRow::Palette, lang::PALETTE),
     ];
     for (row, label) in labels {
         assert_eq!(row.label(), label);

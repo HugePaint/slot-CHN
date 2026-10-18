@@ -34,7 +34,7 @@ use slot_store::{
     LID_OFF_MIN,
 };
 
-pub const PRESS_A_BUTTON: &str = "Press a button";
+pub const PRESS_A_BUTTON: &str = slot_ui::lang::PRESS_A_BUTTON;
 
 #[derive(Copy, Clone, Debug)]
 struct BindCapture {
@@ -183,8 +183,8 @@ impl LinkRow {
 
     pub fn text(self) -> &'static str {
         match self {
-            LinkRow::Host => "Host",
-            LinkRow::Join => "Join",
+            LinkRow::Host => slot_ui::lang::LINK_HOST,
+            LinkRow::Join => slot_ui::lang::LINK_JOIN,
         }
     }
 
@@ -308,8 +308,8 @@ impl Rack {
 
     fn name(self) -> &'static str {
         match self {
-            Rack::Recents => "Recents",
-            Rack::Favorites => "Favorites",
+            Rack::Recents => slot_ui::lang::RECENTS,
+            Rack::Favorites => slot_ui::lang::FAVORITES,
             Rack::Of(p) => p.name(),
         }
     }
@@ -1698,7 +1698,7 @@ impl App {
         let mut texts: Vec<String> = QuickRow::ALL
             .iter()
             .filter(|r| r.binds())
-            .map(|r| Binding::text(self.binding_of(*r)))
+            .map(|r| self.binding_text(*r))
             .collect();
         texts.push(PRESS_A_BUTTON.to_string());
         texts.sort();
@@ -1723,11 +1723,18 @@ impl App {
                 }
                 let text = match self.capture_row() == Some(*r) {
                     true => PRESS_A_BUTTON.to_string(),
-                    false => Binding::text(self.binding_of(*r)),
+                    false => self.binding_text(*r),
                 };
                 self.binding_faces.get(&text).copied()
             })
             .collect()
+    }
+
+    fn binding_text(&self, row: QuickRow) -> String {
+        match self.binding_of(row) {
+            Some(binding) => Binding::text(Some(binding)),
+            None => slot_ui::lang::BINDING_NONE.to_string(),
+        }
     }
 
     fn description(&self, row: QuickRow) -> Option<(TexId, u32, u32)> {
@@ -5079,8 +5086,8 @@ impl App {
             return None;
         }
         match self.pending.as_ref()?.0 {
-            PendingUndo::Save { .. } => Some("undo save"),
-            PendingUndo::Load { .. } => Some("undo load"),
+            PendingUndo::Save { .. } => Some(slot_ui::lang::UNDO_SAVE),
+            PendingUndo::Load { .. } => Some(slot_ui::lang::UNDO_LOAD),
         }
     }
 

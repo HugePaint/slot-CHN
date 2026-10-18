@@ -15,6 +15,7 @@ mod draw;
 mod footer;
 mod hud;
 mod icon;
+pub mod lang;
 mod link_art;
 mod plate;
 mod polaroids;

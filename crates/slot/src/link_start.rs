@@ -1,5 +1,7 @@
 use std::sync::mpsc::{channel, Receiver, TryRecvError};
 
+use slot_ui::lang;
+
 use crate::link_net::{Cancel, TcpLink, HOST_BOUND};
 use crate::link_radio::{self, LinkRole, RadioFail};
 
@@ -55,8 +57,8 @@ impl LinkStep {
 
     pub fn line(self) -> &'static str {
         match self {
-            LinkStep::Radio => "Bringing the radio up",
-            LinkStep::Waiting => "Looking for the other player",
+            LinkStep::Radio => lang::LINK_RADIO,
+            LinkStep::Waiting => lang::LINK_WAITING,
         }
     }
 
@@ -81,10 +83,10 @@ impl LinkFail {
 
     pub fn line(self) -> &'static str {
         match self {
-            LinkFail::Radio => "The radio did not come up",
-            LinkFail::NobodyCame => "Nobody arrived",
-            LinkFail::PeerVanished => "The other player vanished",
-            LinkFail::Cancelled => "Cancelled",
+            LinkFail::Radio => lang::LINK_FAIL_RADIO,
+            LinkFail::NobodyCame => lang::LINK_FAIL_NOBODY,
+            LinkFail::PeerVanished => lang::LINK_FAIL_PEER,
+            LinkFail::Cancelled => lang::LINK_FAIL_CANCELLED,
         }
     }
 }
@@ -278,16 +280,13 @@ mod step_tests {
     #[test]
     fn a_warm_radio_captions_the_first_step_as_the_search() {
         assert_eq!(LinkStep::Radio.shown(true), LinkStep::Waiting);
-        assert_eq!(
-            LinkStep::Radio.shown(true).line(),
-            "Looking for the other player"
-        );
+        assert_eq!(LinkStep::Radio.shown(true).line(), lang::LINK_WAITING);
     }
 
     #[test]
     fn a_cold_radio_still_says_it_is_bringing_the_radio_up() {
         assert_eq!(LinkStep::Radio.shown(false), LinkStep::Radio);
-        assert_eq!(LinkStep::Radio.shown(false).line(), "Bringing the radio up");
+        assert_eq!(LinkStep::Radio.shown(false).line(), lang::LINK_RADIO);
     }
 
     #[test]

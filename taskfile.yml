@@ -78,7 +78,7 @@ tasks:
   lint:device:
     desc: Clippy the device build, which the host lint never compiles
     cmds:
-      - cargo clippy -p slot --no-default-features --features device -- -D warnings
+      - cargo clippy -p slot --no-default-features --features device,lang-zh-cn -- -D warnings
 
   check:
     desc: Everything a CI run would do
@@ -321,7 +321,7 @@ tasks:
         vars:
           CMD: >-
             cargo build --profile device --target-dir target-device
-            -p slot --no-default-features --features device
+            -p slot --no-default-features --features device,lang-zh-cn
       - file target-device/device/slot | grep -q aarch64
       - 'echo "built target-device/device/slot"'
 

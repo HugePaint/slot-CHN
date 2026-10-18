@@ -9,7 +9,7 @@ use slot_store::{format_stamp, BezelPick, Platform as Console};
 use slot_ui::{
     badge_face, bezel_face, cart_shadow, chip_face, chip_shadow_face, core_button_legends,
     date_time_text, default_game_bezel_face, footer_ink, game_bezel_face, gb_cart_shadow, hhmm,
-    hint_face, icon_face, link_button_legends, menu_detail_face, menu_face, photo_face,
+    hint_face, icon_face, lang, link_button_legends, menu_detail_face, menu_face, photo_face,
     prompt_legends, quick_caret_face, quick_description_face, quick_label_face, quick_legend_faces,
     quick_pointer_face, quick_value_face, rebuild_count_face, rebuild_title_face, repair_legends,
     set_clock_hint_face, slot_back, slot_back_light, slot_front, slot_front_light, socket_face,
@@ -147,6 +147,11 @@ impl Frontend {
 
     pub fn boot_with(platform: Box<dyn Platform>, sink: Box<dyn crate::audio::AudioSink>) -> Self {
         let now = Instant::now();
+        if let Some(bytes) =
+            crate::root::font_file(platform.root()).and_then(|path| std::fs::read(path).ok())
+        {
+            slot_ui::text::set_font(bytes);
+        }
         let cart_faces = CartFaces::spawn(platform.root().to_path_buf());
         let mut session = Session::boot_with(platform.root().to_path_buf(), sink);
         crate::boot_time::mark("session");
@@ -243,7 +248,7 @@ impl Frontend {
         self.session.app_mut().set_legend_faces(legend);
         let hint = set_clock_hint_face();
         self.clocks.hint = Some(compositor.create_texture(hint.w, hint.h, &hint.rgba));
-        let back = hint_face("B", "Back");
+        let back = hint_face("B", lang::BACK);
         let tex = compositor.create_texture(back.w, back.h, &back.rgba);
         self.session.app_mut().set_clock_back_face((tex, back.w));
         let star = slot_ui::star_face(slot_ui::STAR_SCALE, slot_ui::STAR_INK);
@@ -672,7 +677,7 @@ impl Frontend {
         }
         let faces = &mut self.rebuild_faces;
         let title = *faces.title.get_or_insert_with(|| {
-            let f = rebuild_title_face("Caching New Labels");
+            let f = rebuild_title_face(lang::CACHING_LABELS);
             (compositor.create_texture(f.w, f.h, &f.rgba), f.w, f.h)
         });
         let done = rebuild.done();
@@ -809,13 +814,7 @@ impl UiFaces {
                 .collect(),
             shutdown: PowerChoice::ALL
                 .iter()
-                .map(|c| {
-                    menu_face(match c {
-                        PowerChoice::Restart => "Restarting",
-                        PowerChoice::PowerOff => "Powering Down",
-                        PowerChoice::Repair => "Repairing SD Card",
-                    })
-                })
+                .map(|c| menu_face(c.shutdown_text()))
                 .collect(),
             quick_labels: QuickRow::ALL
                 .iter()
@@ -830,8 +829,8 @@ impl UiFaces {
             quick_legend: quick_legend_faces(footer_ink(false)),
             quick_legend_light: quick_legend_faces(footer_ink(true)),
             descriptions: [
-                quick_description_face(&["Supports single button and MENU+button."]),
-                quick_description_face(&["Supports single button, SELECT+button and MENU+button."]),
+                quick_description_face(&[lang::SINGLE_BUTTON]),
+                quick_description_face(&[lang::SELECT_BUTTON]),
             ],
             sockets: slot_store::Core::ALL
                 .iter()
@@ -845,7 +844,7 @@ impl UiFaces {
             chip_shadow: chip_shadow_face(),
             core_legend: core_button_legends(),
             link_roles: LinkRow::ALL.iter().map(|r| menu_face(r.text())).collect(),
-            linked: menu_face("Linked"),
+            linked: menu_face(lang::LINKED),
             link_legend: link_legend_faces(footer_ink(false)),
             link_legend_light: link_legend_faces(footer_ink(true)),
             link_steps: LinkStep::ALL.iter().map(|s| menu_face(s.line())).collect(),
@@ -857,21 +856,21 @@ impl UiFaces {
             repair: {
                 let [not_now, repair] = repair_legends(footer_ink(false));
                 vec![
-                    menu_face("Repair the SD card?"),
-                    menu_detail_face("slot restarts when it is done."),
+                    menu_face(lang::REPAIR_QUESTION),
+                    menu_detail_face(lang::REPAIR_RESTARTS),
                     not_now,
                     repair,
                 ]
             },
             reset: {
-                let [cancel, reset] = prompt_legends(footer_ink(false), "Cancel", "Reset");
+                let [cancel, reset] = prompt_legends(footer_ink(false), lang::CANCEL, lang::RESET);
                 vec![
-                    menu_face("Reset all controls?"),
-                    menu_detail_face("Every button goes back to its default."),
-                    menu_face("Reset all shortcuts?"),
-                    menu_detail_face("Every shortcut goes back to its default."),
-                    menu_face("Reset all shelf keys?"),
-                    menu_detail_face("Every shelf key goes back to its default."),
+                    menu_face(lang::RESET_CONTROLS),
+                    menu_detail_face(lang::RESET_CONTROLS_DETAIL),
+                    menu_face(lang::RESET_SHORTCUTS),
+                    menu_detail_face(lang::RESET_SHORTCUTS_DETAIL),
+                    menu_face(lang::RESET_SHELF),
+                    menu_detail_face(lang::RESET_SHELF_DETAIL),
                     cancel,
                     reset,
                 ]
@@ -1041,7 +1040,7 @@ fn sync_game_bezel(app: &mut App, compositor: &mut Compositor, state: &mut Bezel
         .into_iter()
         .enumerate()
     {
-        let label = app.resolved_bezel(platform).label();
+        let label = lang::bezel(&app.resolved_bezel(platform));
         if state.labels[at] == label {
             continue;
         }
@@ -1089,7 +1088,7 @@ fn sync_wallpaper(app: &mut App, compositor: &mut Compositor, state: &mut Wallpa
     if app.quick_menu().is_none() {
         return;
     }
-    let label = app.resolved_wallpaper().label();
+    let label = lang::wallpaper(&app.resolved_wallpaper());
     if state.label == label {
         return;
     }

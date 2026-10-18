@@ -5,6 +5,7 @@ use slot_store::{parse_stamp, StateEntry};
 use crate::art;
 use crate::footer::{draw_corners, Printed};
 use crate::hud::{PLATE, PLATE_H};
+use crate::lang;
 use crate::plate::{hint_quad, hint_row, hint_width, Hint, HINT_GAP, HINT_H, TITLE_H, TITLE_W};
 
 pub const PHOTO_W: u32 = 240;
@@ -18,7 +19,7 @@ const DOT_DIM: f32 = 0.35;
 
 const MARGIN: f32 = 16.0;
 
-pub const LEGEND: [(&str, &str); 3] = [("B", "Back"), ("Y", "Delete"), ("A", "Load")];
+pub const LEGEND: [(&str, &str); 3] = [("B", lang::BACK), ("Y", lang::DELETE), ("A", lang::LOAD)];
 const WAYS_OUT: usize = 2;
 const UNDO_KEY: &str = "X";
 
@@ -237,15 +238,26 @@ impl Polaroids {
         };
         let delta = parsed - then;
         if delta < 60 {
-            return "just now".into();
+            return lang::JUST_NOW.into();
         }
         if delta < 3600 {
-            return format!("{} min ago", delta / 60);
+            return relative(delta / 60, lang::MIN_AGO);
         }
         if delta < RELATIVE_WINDOW {
-            return format!("{} hr ago", delta / 3600);
+            return relative(delta / 3600, lang::HR_AGO);
         }
         format!("{} {}:{}", &stamp[..10], &stamp[11..13], &stamp[14..16])
+    }
+}
+
+fn relative(value: i64, unit: &str) -> String {
+    #[cfg(not(feature = "lang-zh-cn"))]
+    {
+        format!("{value} {unit}")
+    }
+    #[cfg(feature = "lang-zh-cn")]
+    {
+        format!("{value}{unit}")
     }
 }
 

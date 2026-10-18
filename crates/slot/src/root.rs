@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-pub const DIRS: [&str; 24] = [
+pub const DIRS: [&str; 25] = [
     "BIOS",
     "Bezels",
     "Bezels/GB",
@@ -24,6 +24,7 @@ pub const DIRS: [&str; 24] = [
     "States/GB",
     "States/GBC",
     "System",
+    "System/fonts",
     "Wallpapers",
 ];
 
@@ -34,6 +35,33 @@ pub fn ensure(root: &Path) {
     if let Err(e) = slot_store::move_config(root) {
         eprintln!("slot: config: {e}");
     }
+}
+
+/// Returns the first card-provided interface font in deterministic name order.
+///
+/// `System/font.ttf` remains supported as a convenient single-file form.
+pub fn font_file(root: &Path) -> Option<PathBuf> {
+    let mut files: Vec<PathBuf> = std::fs::read_dir(root.join("System/fonts"))
+        .ok()
+        .into_iter()
+        .flatten()
+        .flatten()
+        .map(|entry| entry.path())
+        .filter(|path| !slot_store::is_hidden(path))
+        .filter(|path| {
+            path.extension().is_some_and(|ext| {
+                ext.eq_ignore_ascii_case("ttf")
+                    || ext.eq_ignore_ascii_case("otf")
+                    || ext.eq_ignore_ascii_case("ttc")
+            })
+        })
+        .collect();
+    files.sort();
+    files.into_iter().next().or_else(|| {
+        root.join("System/font.ttf")
+            .is_file()
+            .then(|| root.join("System/font.ttf"))
+    })
 }
 
 pub fn bios_dir(root: &Path) -> PathBuf {

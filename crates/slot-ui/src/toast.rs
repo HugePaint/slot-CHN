@@ -3,6 +3,7 @@ use slot_store::GbPalette;
 
 use crate::hud::{HUD_INK, PLATE_H};
 use crate::icon::{haloed, HALO_PX};
+use crate::lang;
 use crate::text;
 use crate::CartFace;
 
@@ -78,32 +79,31 @@ impl Toast {
 
     pub fn detail(self) -> Option<&'static str> {
         match self {
-            Toast::CardUnwritable => Some("Progress is not being saved"),
-            Toast::CardRepair => Some("Press SELECT + START to repair"),
+            Toast::CardUnwritable => Some(lang::DETAIL_NOT_SAVED),
+            Toast::CardRepair => Some(lang::DETAIL_REPAIR),
             _ => None,
         }
     }
 
     pub fn text(self) -> &'static str {
         match self {
-            Toast::StateSaved => "State Saved",
-            Toast::StateLoaded => "State Loaded",
-            Toast::NeedsGpsp => "Please switch to gpSP",
-            Toast::NoLink => "No link support",
-            Toast::LinkEnded => "Link ended",
-            Toast::PeerEnded => "Link was ended",
-            Toast::BiosMismatch => "BIOS does not match",
-            Toast::ColourOn => "Correction On",
-            Toast::ColourOff => "Correction Off",
-            Toast::ShaderOff => "Shader: Off",
-            Toast::ShaderLcd3x => "Shader: LCD3x",
-            Toast::ShaderGrid => "Shader: Grid",
-            Toast::ShaderDot => "Shader: Dot",
-            Toast::ShaderSimpletex => "Shader: Simpletex",
-            Toast::CardUnwritable => "Can't write to SD card",
-            Toast::CardRepair => "Can't write to SD card",
-            Toast::CardRepaired => "SD card repaired",
-            Toast::CardRepairFailed => "Card repair failed",
+            Toast::StateSaved => lang::TOAST_STATE_SAVED,
+            Toast::StateLoaded => lang::TOAST_STATE_LOADED,
+            Toast::NeedsGpsp => lang::TOAST_NEEDS_GPSP,
+            Toast::NoLink => lang::TOAST_NO_LINK,
+            Toast::LinkEnded => lang::TOAST_LINK_ENDED,
+            Toast::PeerEnded => lang::TOAST_PEER_ENDED,
+            Toast::BiosMismatch => lang::TOAST_BIOS_MISMATCH,
+            Toast::ColourOn => lang::TOAST_COLOUR_ON,
+            Toast::ColourOff => lang::TOAST_COLOUR_OFF,
+            Toast::ShaderOff => lang::TOAST_SHADER_OFF,
+            Toast::ShaderLcd3x => lang::TOAST_SHADER_LCD3X,
+            Toast::ShaderGrid => lang::TOAST_SHADER_GRID,
+            Toast::ShaderDot => lang::TOAST_SHADER_DOT,
+            Toast::ShaderSimpletex => lang::TOAST_SHADER_SIMPLETEX,
+            Toast::CardUnwritable | Toast::CardRepair => lang::TOAST_CARD_UNWRITABLE,
+            Toast::CardRepaired => lang::TOAST_CARD_REPAIRED,
+            Toast::CardRepairFailed => lang::TOAST_CARD_REPAIR_FAILED,
             Toast::Palette(p) => p.label(),
         }
     }

@@ -1,3 +1,4 @@
+use crate::lang;
 use crate::plate::UndoFace;
 use crate::text;
 
@@ -17,6 +18,14 @@ impl PowerChoice {
 
     pub fn index(self) -> usize {
         self as usize
+    }
+
+    pub fn shutdown_text(self) -> &'static str {
+        match self {
+            PowerChoice::Restart => lang::SHUTDOWN_RESTART,
+            PowerChoice::PowerOff => lang::SHUTDOWN_POWER_OFF,
+            PowerChoice::Repair => lang::SHUTDOWN_REPAIR,
+        }
     }
 }
 
