@@ -14,16 +14,16 @@ jobs:
     runs-on: ubuntu-24.04-arm
     container: rust:1-bullseye
     outputs:
-      artifact: ${{ steps.artifact.outputs.name }}
+      zip: ${{ steps.package.outputs.zip }}
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install cmake and Task
+      - name: Install zip, cmake and Task
         run: |
           set -eu
           sed -i '/bullseye-security/d' /etc/apt/sources.list
           apt-get -o Acquire::Check-Valid-Until=false update
-          apt-get install -y --no-install-recommends cmake
+          apt-get install -y --no-install-recommends zip cmake
           curl -fsSL https://taskfile.dev/install.sh | sh -s -- -b /usr/local/bin
 
       - name: Build the tree
@@ -49,18 +49,19 @@ jobs:
             test -f "$out/System/licenses/mgba-$(basename "$p")"
           done
 
-      - name: Describe artifact
-        id: artifact
+      - name: Package
+        id: package
         run: |
           set -eu
           out="slot-${GITHUB_REF_NAME}"
-          echo "name=$out-h700" >> "$GITHUB_OUTPUT"
-          echo "tree=$out" >> "$GITHUB_OUTPUT"
+          zip="$out-h700.zip"
+          zip -qry "$zip" "$out"
+          echo "zip=$zip" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v7
         with:
-          name: ${{ steps.artifact.outputs.name }}
-          path: ${{ steps.artifact.outputs.tree }}/
+          name: ${{ steps.package.outputs.zip }}
+          path: ${{ steps.package.outputs.zip }}
           if-no-files-found: error
 
   publish:
@@ -73,21 +74,18 @@ jobs:
     steps:
       - uses: actions/download-artifact@v8
         with:
-          name: ${{ needs.build.outputs.artifact }}
-          path: staging/slot-${{ github.ref_name }}
+          name: ${{ needs.build.outputs.zip }}
 
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
-          ARTIFACT: ${{ needs.build.outputs.artifact }}
+          ZIP: ${{ needs.build.outputs.zip }}
         run: |
           set -eu
-          zip="$ARTIFACT.zip"
-          (cd staging && zip -qry "../$zip" "slot-${GITHUB_REF_NAME}")
           cat > notes.md <<NOTES
           Unzip and copy the contents of \`slot-${GITHUB_REF_NAME}/\` onto SD2.
 
           Emulation by mGBA (MPL-2.0) and gpSP (GPL-2.0). Their licences, patches and gpSP's source are in \`System/licenses/\`.
           NOTES
-          gh release create "$GITHUB_REF_NAME" "$zip" --repo "$GITHUB_REPOSITORY" \
+          gh release create "$GITHUB_REF_NAME" "$ZIP" --repo "$GITHUB_REPOSITORY" \
             --title "$GITHUB_REF_NAME" --notes-file notes.md
