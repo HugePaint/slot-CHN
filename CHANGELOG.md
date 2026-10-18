@@ -1,127 +1,127 @@
-# Changelog
+# 更新日志
 
 ## [1.8.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.8.0)
 
-- When the SD card turns read-only, SELECT + START repairs it: slot steps aside, checks FAT32 or exFAT, and restarts. (#72, #111)
-- Power off, including the shutdown after the lid has been closed for 3 minutes, no longer hangs on a black screen: the Wi-Fi driver is unloaded first, as Restart already does.
-- If slot stops responding with the lid closed, a separate watcher powers off a minute after the Lid Off time.
-- Run-Ahead is removed. It scrambled saves in games with a 128 KB flash chip, such as Super Mario Advance 4. (#104)
-- Loading a state while a game is saving to a 128 KB flash chip no longer writes the save into the wrong half of the chip.
-- The cart insertion animation no longer stutters, and a large ROM still loading after the cart seats powers the screen on to a blank panel that brightens until the game appears. (#119)
-- On Anbernics with a left stick, the stick works as the D-pad. Left Stick as D-Pad on the Gameplay page turns it off. (#106, #107)
+- 当存储卡变为只读时，可按 SELECT + START 进行修复：slot 会退出运行，检查 FAT32 或 exFAT 文件系统，然后重新启动。 (#72, #111)
+- 关机不再卡在黑屏，包括合盖 3 分钟后触发的关机。现在会像重启流程一样，先卸载 Wi-Fi 驱动。
+- 如果 slot 在合盖状态下停止响应，独立的监控程序会在达到「合盖关机」设定时长的一分钟后关闭设备。
+- 移除了预运行（Run-Ahead）功能。该功能会破坏使用 128 KB Flash 芯片的游戏存档，例如《Super Mario Advance 4》。 (#104)
+- 在游戏向 128 KB Flash 芯片保存数据时读取即时存档，不再把存档写入芯片中错误的一半。
+- 卡带插入动画不再卡顿。如果卡带插到底后大型 ROM 仍未载入完成，屏幕会先显示逐渐变亮的空白画面，直至游戏出现。 (#119)
+- 在配备左摇杆的 Anbernic 设备上，摇杆现在可用作十字键。可通过「游戏」页面中的「左摇杆映射十字键」将其关闭。 (#106, #107)
 
 ## [1.7.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.7.0)
 
-- The slot, carts and shelf now have a skeuomorphic effect, with light and dark themes and bundled wallpapers. Huge thanks to Markus for this amazing work! (#74, @MarkusMaribu)
-- An in-game menu: tap MENU to pause the game behind it. A double tap still goes straight to States.
-- Favorites: Y stars a cart onto its own shelf. (#89, @diluno)
-- A Recents shelf of the last 10 games, switched on from Settings -> General.
-- slot remembers the shelf and cart at power off and boots back onto them. (#53)
-- Per-platform bezels. Markus again! (#77, @MarkusMaribu)
-- On 4:3 panels the shelf fills the screen. (#81, @diluno)
-- Game Titles on the General page fades the shelf name into the selected game's name. (#84)
-- A 1 frame run-ahead setting for GBA games on mGBA. (#56, @454135431515)
-- Wallpaper Tint darkens your own wallpaper on the shelf.
-- GBA, GB and GBC each get their own Shader and Color Correction rows. (#83, @paulocoe-creator)
-- LCD3x is offered for GB and GBC games. (#88, @paulocoe-creator)
-- Game Boy stretch now properly only widens the picture.
-- The backlight steps follow a curve, so the low-end goes dimmer. (#54, @flo333)
-- Holding a direction repeats it in menus, the clock and the shelf letter jump, but never in play.
-- RG34XX uses its own chords for brightness and the menu display. (#85, @paulocoe-creator)
-- The RG28XX picture is turned the way BaseOS says.
-- Restart no longer hangs on a black screen: the WiFi driver is unloaded first.
-- Muted play keeps its frame rate. (#51, @flo333)
-- Fast-forward no longer stutters on frames that take longer than average. (#70)
-- gpSP no longer crashes when a crowded boot left its JIT cache unmapped.
-- Core options follow the platform that is playing. (#82)
-- Card logs moved into a `Logs` folder, and the session log rotates. Card alarms are logged too.
+- 卡槽、卡带和游戏架现已采用拟物化效果，并提供浅色与深色主题以及内置壁纸。非常感谢 Markus 完成这些美术设计！ (#74, @MarkusMaribu)
+- 新增游戏内菜单：轻按 MENU 可暂停位于菜单后方的游戏；双击 MENU 仍会直接进入「即时存档」。
+- 新增「收藏」游戏架：按 Y 可为卡带添加星标并将其放入该游戏架。 (#89, @diluno)
+- 新增显示最近 10 个游戏的「最近使用」游戏架，可在「设置 -> 通用」中启用。
+- slot 会记住关机时所在的游戏架和选中的卡带，并在下次启动时恢复至该位置。 (#53)
+- 不同平台可使用各自的边框。再次感谢 Markus！ (#77, @MarkusMaribu)
+- 在 4:3 屏幕上，游戏架现在会填满整个屏幕。 (#81, @diluno)
+- 「通用」页面中的「游戏标题」可让游戏架名称渐变为当前所选游戏的名称。 (#84)
+- 为使用 mGBA 运行的 GBA 游戏新增提前 1 帧的预运行设置。 (#56, @454135431515)
+- 「壁纸调色」可将游戏架上的自定义壁纸调暗。
+- GBA、GB 和 GBC 现可分别设置各自的「滤镜」与「色彩校正」。 (#83, @paulocoe-creator)
+- GB 和 GBC 游戏现可使用 LCD3x。 (#88, @paulocoe-creator)
+- Game Boy 的拉伸模式现在只会正确地加宽画面。
+- 背光亮度档位改为按曲线变化，因此低亮度区间可以调得更暗。 (#54, @flo333)
+- 在菜单、时钟设置和游戏架字母跳转中，按住方向键可连续输入；游戏过程中绝不会触发连续输入。
+- RG34XX 使用专属组合键调节亮度和呼出菜单。 (#85, @paulocoe-creator)
+- RG28XX 的画面现在会按照 BaseOS 指定的方向旋转。
+- 重启不再卡在黑屏；系统会先卸载 Wi-Fi 驱动。
+- 静音游戏时仍可保持正常帧率。 (#51, @flo333)
+- 快进时，耗时高于平均值的帧不再造成卡顿。 (#70)
+- 当繁忙的启动过程导致 JIT 缓存未映射时，gpSP 不再崩溃。
+- 核心选项会随当前运行游戏的平台切换。 (#82)
+- 存储卡上的日志已移至 `Logs` 文件夹，会话日志会循环轮替，存储卡警报也会写入日志。
 
 ## [1.6.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.6.0)
 
-- Runs on the RG28XX: its panel is mounted portrait, so slot turns the picture onto it. (#35, @GamerAnim)
-- Pokémon Pinball: Ruby & Sapphire rumble. mGBA now sees the game's Game Boy Player check. You still need to turn rumble on in game settings. (#25)
-- A red alarm shows when the SD card turns read-only or a save fails to write.
-- A new shortcut for mute: SELECT + VOL+ / VOL-. The 34XX has a fake volume wheel so VOL+ + VOL- isn't possible. (#39)
-- Game Boy cartridge clocks are kept in the .sav. (#22)
-- The GBA cartridge clock keeps running on gpSP while the game is off.
-- Large libraries now should boot faster, and the first frame shows sooner.
-- Games start faster: resting on a cart reads its ROM ahead, so big ROMs no longer wait on the SD card when you insert them.
-- Wallpapers are dealt from a shuffled deck, so none repeats until all have shown.
-- PNG art is turned the way its EXIF orientation tag says.
-- When slot crashes it logs where, and keeps that run's log in `crash/` to attach to a bug report.
-- The BaseOS startup sound no longer leaves slot silent. (#20)
-- A user defined `Config/bootlogo.bmp` will take precedence over the shipped one. (#30)
-- Cart shell, core and video mode files are now `.txt` instead of `.ini`, so Chrome on Windows opens them. slot renames them on first boot. (#15)
-- The grid shader's lines stay even on the RG34XX and at fractional scales, and the dot shader no longer darkens a white screen as much. (#26, #36)
+- 现可在 RG28XX 上运行：由于其屏幕以竖向安装，slot 会将画面旋转至正确方向。 (#35, @GamerAnim)
+- 《Pokémon Pinball: Ruby & Sapphire》现已支持震动。mGBA 现在能够识别游戏对 Game Boy Player 的检测；仍需在游戏设置中开启震动。 (#25)
+- 当存储卡变为只读或存档写入失败时，会显示红色警报。
+- 新增静音快捷键 SELECT + VOL+ / VOL-。34XX 使用模拟音量滚轮，因此无法使用 VOL+ + VOL-。 (#39)
+- Game Boy 卡带的时钟数据会保存在 `.sav` 文件中。 (#22)
+- 使用 gpSP 时，即使游戏未运行，GBA 卡带时钟仍会继续计时。
+- 大型游戏库现在应能更快启动，首帧也会更早显示。
+- 游戏启动速度得到提升：选中卡带并停留时会预读其 ROM，因此插入大型 ROM 时不再需要等待存储卡读取。
+- 壁纸会像洗牌后发牌一样依次显示，在所有壁纸都出现过之前不会重复。
+- PNG 美术资源会按照其 EXIF 方向标签旋转。
+- slot 崩溃时会记录崩溃位置，并将该次运行的日志保存在 `crash/` 中，以便附加到错误报告。
+- BaseOS 的启动音效不再导致 slot 静音。 (#20)
+- 用户自定义的 `Config/bootlogo.bmp` 会优先于内置文件使用。 (#30)
+- 卡带外壳、核心和视频模式文件的扩展名已由 `.ini` 改为 `.txt`，以便在 Windows 上用 Chrome 打开。slot 会在首次启动时自动重命名这些文件。 (#15)
+- 网格滤镜的线条在 RG34XX 和非整数缩放下都能保持均匀；点阵滤镜也不再让白色画面明显变暗。 (#26, #36)
 
 ## [1.5.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.5.0)
 
-- Rumble regression fixed.
-- The boot logo is built to the size of the one BaseOS installed, so it fits every panel instead of only 720x480.
-- Runs on the RG35XXSP: the picture fills the 4:3 screen's width and a GBA SP bezel sits underneath while a game plays.
-- Screen shaders chosen per platform: Off, LCD3x, Grid or Dot for GBA, and Off, Grid or Simpletex for Game Boy and Game Boy Color.
-- SELECT + B / A in game steps back and forth through the screen shaders. A game's own soft reset that holds SELECT with A or B no longer reaches it; hold A on the carousel to start a game fresh instead.
-- New settings: auto save on eject, turbo buttons and rewind can each be switched off.
-- Settings are grouped into Screen and Gameplay pages, and every value wraps from the last choice to the first.
-- Label art is cached on the card, so the shelf no longer stutters building cart faces. New labels are cached once at boot behind a Caching New Labels screen.
-- Named palettes for Game Boy games: turn on GB Palettes in the Screen settings, then SELECT + L2 / R2 in game steps back and forth through mGBA's 48 palettes.
-- The speaker no longer buzzes while nothing is playing. slot lets go of the audio device after 3 seconds of silence and takes it back when sound starts. Thanks to flo333 for finding it.
+- 修复了震动功能的回归问题。
+- 启动徽标会按照 BaseOS 所安装徽标的尺寸生成，因此不再只适配 720x480，而是能适配所有屏幕。
+- 现可在 RG35XXSP 上运行：游戏画面会填满 4:3 屏幕的宽度，并在其下方显示 GBA SP 边框。
+- 可按平台选择屏幕滤镜：GBA 可选关闭、LCD3x、网格或点阵；Game Boy 和 Game Boy Color 可选关闭、网格或 Simpletex。
+- 游戏中可按 SELECT + B / A 前后切换屏幕滤镜。游戏自身通过同时按住 SELECT 与 A 或 B 触发的软重置将不再生效；如需从头启动游戏，请在卡带轮播列表中按住 A。
+- 新增设置：可分别关闭弹出时自动保存、连发按键和倒带功能。
+- 设置项分为「显示」和「游戏」页面，每个选项都可从最后一项循环回第一项。
+- 标签美术会缓存在存储卡上，因此游戏架在生成卡带正面时不再卡顿。新标签会在启动时于「正在缓存新标签」画面后一次性完成缓存。
+- 为 Game Boy 游戏新增具名调色板：在「显示」设置中开启 GB 调色板后，可在游戏中按 SELECT + L2 / R2 前后切换 mGBA 的 48 种调色板。
+- 无内容播放时扬声器不再发出嗡嗡声。静音持续 3 秒后，slot 会释放音频设备，并在声音恢复时重新占用。感谢 flo333 发现此问题。
 
 ## [1.4.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.4.0)
 
-- The volume bar shows a headphones icon while they are plugged in.
-- Speaker and headphones keep their own volume and mute, and switch the moment you plug / unplug.
-- Settings moved from `System/` to a new `Config/` folder, so replacing `System/` on update no longer resets them. slot moves them on first boot.
-- The quick menu and power menu wrap from the last item to the first, and back.
+- 插入耳机时，音量条会显示耳机图标。
+- 扬声器和耳机各自保留独立的音量与静音状态，并会在插入或拔出耳机时立即切换。
+- 设置文件已从 `System/` 移至新的 `Config/` 文件夹，因此更新时替换 `System/` 不再重置设置。slot 会在首次启动时自动迁移这些文件。
+- 快捷菜单和电源菜单可在首尾项目之间循环切换。
 
 ## [1.3.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.3.0)
 
-- The SP boots to a slot logo instead of BaseOS's. slot installs `System/bootlogo.bmp` on first run and keeps the original as `bootlogo.baseos.bmp`.
+- SP 启动时会显示 slot 徽标，而非 BaseOS 徽标。slot 会在首次运行时安装 `System/bootlogo.bmp`，并将原文件保留为 `bootlogo.baseos.bmp`。
 
 ## [1.2.2](https://github.com/BrandonKowalski/slot/releases/tag/v1.2.2)
 
-- Fix for hitch in games caused by autosave. The autosave now writes to the card in the background.
+- 修复了自动保存导致游戏卡顿的问题。自动保存现在会在后台写入存储卡。
 
 ## [1.2.1](https://github.com/BrandonKowalski/slot/releases/tag/v1.2.1)
 
-- Shell colors from Cart Studio now apply to games with accented names.
-- Clear GBA carts no longer show their circuit board above the label.
+- Cart Studio 中设置的外壳颜色现在也能应用于名称含变音符号的游戏。
+- 透明 GBA 卡带不再于标签上方露出电路板。
 
 ## [1.2.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.2.0)
 
-- Hold X for turbo A and Y for turbo B.
-- Carts on the shelf are larger, and shrink into the slot as they go in.
-- Carts are drawn at their real proportions, so full label scans fit without cropping.
-- Jumping a letter with Up or Down shows the letter in the slot.
-- Saves now stick for games whose save is smaller than the core first reports, such as Golden Sun on mGBA.
-- The seated cart no longer shows through the slot as a game starts.
-- SELECT reaches the game as soon as it can no longer be the start of a shortcut.
+- 按住 X 可连发 A，按住 Y 可连发 B。
+- 游戏架上的卡带显示得更大，并会在插入卡槽时逐渐缩小。
+- 卡带会按照真实比例绘制，因此完整扫描的标签无需裁切即可放入。
+- 使用上、下键按字母跳转时，该字母会显示在卡槽中。
+- 对于实际存档小于核心初始报告大小的游戏，存档现在可以正确保留，例如在 mGBA 上运行的《Golden Sun》。
+- 游戏启动时，已插入的卡带不再透过卡槽显示。
+- 当 SELECT 已不可能构成快捷键的起始输入时，该按键会立即传递给游戏。
 
 ## [1.1.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.1.0)
 
-- Fast-forward runs several game frames per refresh, so it is properly fast, and rewind no longer records while fast forwarding.
-- The About label credits BaseOS.
+- 快进现在会在每次屏幕刷新期间运行多个游戏帧，因而能够真正加速；快进时也不再记录倒带数据。
+- 「关于」标签中新增了对 BaseOS 的致谢。
 
 ## [1.0.0](https://github.com/BrandonKowalski/slot/releases/tag/v1.0.0)
 
-- Game Boy and Game Boy Color, each on its own shelf. L1 and R1 switch shelves, and carts are drawn at their own size in their own plastics.
-- Two cores, mGBA and gpSP. Press START on a cart to open it and swap the chip.
-- Link play between two RG SPs over WiFi: the link cable and the Wireless Adapter for Pokémon trades and Advance Wars, mGBA's link mode for Mario Kart, and Game Boy link for Tetris.
-- A quick menu on the shelf for fast forward speed and sound, rumble, color correction, the date and time, and About.
-- Game Boy games stretch to fill the screen with L1 and go back with R1.
-- The real BIOS boot animation plays when the card has one.
-- Per-cart shell colors, set in `cart_shell.ini`.
-- Up and Down jump through the shelf a letter at a time.
-- Your own folder layout on the card is kept, and slot runs on upstream BaseOS.
+- Game Boy 和 Game Boy Color 各有独立的游戏架。使用 L1 和 R1 切换游戏架；不同平台的卡带会按照各自尺寸和塑料外壳绘制。
+- 提供 mGBA 和 gpSP 两个核心。在卡带上按 START 可将其打开并更换芯片。
+- 两台 RG SP 可通过 Wi-Fi 联机：支持用于《Pokémon》交换和《Advance Wars》的连接线及 Wireless Adapter、用于《Mario Kart》的 mGBA 联机模式，以及用于《Tetris》的 Game Boy 联机。
+- 游戏架上新增快捷菜单，可设置快进速度与声音、震动、色彩校正、日期和时间，并可查看「关于」。
+- Game Boy 游戏可按 L1 拉伸至全屏，按 R1 恢复。
+- 存储卡中包含真实 BIOS 时，会播放其启动动画。
+- 可在 `cart_shell.ini` 中为每个卡带单独设置外壳颜色。
+- 使用上、下键可在游戏架中逐个字母跳转。
+- 会保留存储卡上原有的文件夹布局，且 slot 可在上游 BaseOS 上运行。
 
 ## [0.1.1](https://github.com/BrandonKowalski/slot/releases/tag/v0.1.1)
 
-- The game holds still behind the power menu.
-- Rewind records at every speed and replays exactly what happened.
+- 打开电源菜单时，其后的游戏画面会保持静止。
+- 倒带功能会在所有运行速度下记录，并准确重放实际发生的内容。
 
 ## [0.1.0](https://github.com/BrandonKowalski/slot/releases/tag/v0.1.0)
 
-- First release: a GBA-only shelf of cartridges with an insert scrape and clunk.
-- The game in the slot resumes on the next boot. Closing the lid sleeps and saves.
-- Save states with a switcher, rewind, fast-forward, brightness, blue light and volume.
-- A power menu on a held POWER, and an About label.
+- 首个版本：仅支持 GBA 的卡带游戏架，并带有卡带插入时的摩擦声与咔嗒声。
+- 卡槽中的游戏会在下次启动时继续运行；合盖会使设备休眠并保存进度。
+- 提供带切换界面的即时存档、倒带、快进、亮度、护眼强度和音量功能。
+- 长按 POWER 可打开电源菜单，并提供「关于」标签。
